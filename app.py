@@ -134,12 +134,3 @@ else:
         if st.button("Next Verb ➡️"):
             next_question()
             st.rerun()
-Key Changes for the UI:
-
-game_started Toggle: I added a boolean in the session state. If it's False, the app only renders the welcome message and level selector.
-
-st.selectbox: Instead of radio buttons in the sidebar, the user now has a clean dropdown in the center of the screen to pick their challenge.
-
-Main Menu Navigation: I added a "Quit to Main Menu" button in the sidebar so the user can go back and switch levels without refreshing the browser.
-
-Layout: The level-specific instructions only appear after the game starts, keeping the interface clean and focused.
