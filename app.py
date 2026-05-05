@@ -1,75 +1,63 @@
-import streamlit as st
 import random
 
-# Initializing the top verbs with present, past, and future translations
-# Note: I've started with a few examples. You can expand this list to 100.
-verbs_data = [
-    {
-        "spanish": "Ser (Presente: Soy)",
-        "english": "To be",
-        "filipino": "Maging",
-        "example_en": "I am a professional.",
-        "example_ph": "Ako ay isang propesyonal."
+# A dictionary containing the verb data. 
+# Format: "Infinitivo": { Tense: Conjugation, "example": (Spanish, English) }
+VERB_DATA = {
+    "hablar": {
+        "preterito perfecto simple": "hablé",
+        "preterito imperfecto": "hablaba",
+        "futuro": "hablaré",
+        "condicional": "hablaría",
+        "example": ("Yo hablé con mi madre ayer.", "I spoke with my mother yesterday.")
     },
-    {
-        "spanish": "Haber (Pasado: Había)",
-        "english": "To have",
-        "filipino": "Mayroon",
-        "example_en": "There was a meeting.",
-        "example_ph": "Mayroong pagpupulong."
+    "tener": {
+        "preterito perfecto simple": "tuve",
+        "preterito imperfecto": "tenía",
+        "futuro": "tendré",
+        "condicional": "tendría",
+        "example": ("Tendré un coche nuevo pronto.", "I will have a new car soon.")
     },
-    {
-        "spanish": "Ir (Futuro: Iré)",
-        "english": "To go",
-        "filipino": "Pumunta",
-        "example_en": "I will go to Spain.",
-        "example_ph": "Pupunta ako sa Espanya."
-    }
-]
+    "ir": {
+        "preterito perfecto simple": "fui",
+        "preterito imperfecto": "iba",
+        "futuro": "iré",
+        "condicional": "iría",
+        "example": ("Nosotros íbamos al parque cada día.", "We used to go to the park every day.")
+    },
+    # Add more verbs here to reach the top 100
+}
 
-# Initialize Session States
-if 'score' not in st.session_state:
-    st.session_state.score = 0
-if 'current_card' not in st.session_state:
-    st.session_state.current_card = random.choice(verbs_data)
-if 'feedback' not in st.session_state:
-    st.session_state.feedback = ""
+def play_game():
+    score = 0
+    verbs = list(VERB_DATA.keys())
+    random.shuffle(verbs)
 
-def check_answer(user_input, correct_en, correct_ph):
-    user_input = user_input.strip().lower()
-    if user_input == correct_en.lower() or user_input == correct_ph.lower():
-        st.session_state.score += 1
-        st.session_state.feedback = "✅ Correct! +1 Point"
-        st.session_state.current_card = random.choice(verbs_data)
-    else:
-        st.session_state.feedback = f"❌ Try again! (Hints on the back)"
+    print("--- ¡Bienvenido al Juego de Conjugación! ---")
+    print("Type the correct conjugation for the given tense.")
+    print("Type 'exit' at any time to quit.\n")
 
-# --- UI LAYOUT ---
-st.title("🇪🇸 Spanish Verb Flashcards")
-st.subheader(f"Score: {st.session_state.score}")
+    for verb in verbs:
+        tenses = ["preterito perfecto simple", "preterito imperfecto", "futuro", "condicional"]
+        target_tense = random.choice(tenses)
+        correct_answer = VERB_DATA[verb][target_tense]
+        
+        print(f"Verb: {verb.upper()}")
+        user_input = input(f"Conjugate for '{target_tense}' (1st person singular - Yo): ").strip().lower()
 
-# Front of the Card
-st.info(f"### Verb: {st.session_state.current_card['spanish']}")
+        if user_input == 'exit':
+            break
 
-# User Input
-user_guess = st.text_input("Translate to English or Filipino:", key="input")
+        if user_input == correct_answer:
+            score += 1
+            spanish_ex, english_ex = VERB_DATA[verb]["example"]
+            print(f"✅ ¡Correcto! +1 point.")
+            print(f"Example: {spanish_ex}")
+            print(f"Translation: {english_ex}\n")
+        else:
+            print(f"❌ Incorrecto. The correct form was: '{correct_answer}'\n")
 
-if st.button("Submit Answer"):
-    check_answer(user_guess, st.session_state.current_card['english'], st.session_state.current_card['filipino'])
-    st.rerun()
+    print(f"--- Game Over ---")
+    print(f"Your final score: {score}")
 
-st.write(st.session_state.feedback)
-
-# Back of the Card (Expander)
-with st.expander("👀 See Back of Card (Translations & Examples)"):
-    card = st.session_state.current_card
-    st.write(f"English:")
-    st.write(f"Filipino:")
-    st.divider()
-    st.write(f"*Example (EN):* {card['example_en']}")
-    st.write(f"*Example (PH):* {card['example_ph']}")
-
-if st.button("Skip / Next Card"):
-    st.session_state.current_card = random.choice(verbs_data)
-    st.session_state.feedback = ""
-    st.rerun()
+if __name__ == "__main__":
+    play_game()
